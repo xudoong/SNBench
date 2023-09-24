@@ -1,0 +1,8 @@
+result/spr_latency.csv
+result/gna_latency.csv
+result/kp_latency.csv
+result/output_latency.csv
+result/spr_throughput.csv
+result/gna_throughput.csv
+result/kp_throughput.csv
+result/output_throughput.csv
