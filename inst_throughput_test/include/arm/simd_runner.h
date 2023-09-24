@@ -53,18 +53,19 @@ int choose_repeat(op_func_t func, double a, double b)
 {
     static WallTimer timer;
     const int try_repeat = 5000;
+    double foo;
     // warmup
-    func(a, b, try_repeat);
+    foo += func(a, b, try_repeat);
     // try run
     timer.start();
-    func(a, b, try_repeat);
+    foo += func(a, b, try_repeat);
     timer.finish();
     double sec = timer.elapsed_ns() * 1e-9 / try_repeat;
 
     int repeat = MIN_TIMING_SECONDS / sec;
     repeat = std::max(repeat, MIN_REPEAT);
     repeat = std::min(repeat, MAX_REPEAT);
-    return repeat;
+    return repeat + (foo > 1e308);
 }
 
 double measure_one_simd(op_func_t func, double a, double b, std::vector<double> &cpi_list)

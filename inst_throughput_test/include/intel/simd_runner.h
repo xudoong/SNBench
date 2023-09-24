@@ -80,19 +80,20 @@ int choose_repeat(op_func_t func, double a, double b)
 {
     static WallTimer timer;
     const int try_repeat = 5000;
+    double foo = 0;
     // warmup
     // seperately call run_avx_512 from other SIMD funcs because of the annoying (avx-512, Intel SVML, function pointer) bug in AMD
     if (func == op::run_avx_512) {
-        op::run_avx_512(a, b, try_repeat);
+        foo += op::run_avx_512(a, b, try_repeat);
     } else {
-        func(a, b, try_repeat);
+        foo += func(a, b, try_repeat);
     }
     // try run
     timer.start();
     if (func == op::run_avx_512) {
-        op::run_avx_512(a, b, try_repeat);
+        foo += op::run_avx_512(a, b, try_repeat);
     } else {
-        func(a, b, try_repeat);
+        foo += func(a, b, try_repeat);
     }
     timer.finish();
     double sec = timer.elapsed_ns() * 1e-9 / try_repeat;
@@ -100,7 +101,7 @@ int choose_repeat(op_func_t func, double a, double b)
     int repeat = MIN_TIMING_SECONDS / sec;
     repeat = std::max(repeat, MIN_REPEAT);
     repeat = std::min(repeat, MAX_REPEAT);
-    return repeat;
+    return repeat + (foo > 1e308);
 }
 
 double measure_one_simd(op_func_t func, double a, double b, std::vector<double> &cpi_list)
