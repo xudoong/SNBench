@@ -1,13 +1,12 @@
 
 #pragma once
 #include <arm_neon.h>
+#include <arm_sve.h>
 #include "include.h"
-#include "sleef.h"
 
 namespace op
 {
 const std::string NAME="SQRT";
-const bool has_neon_128 = true;
 
 double run_serial(double a, double b, int repeat) {
     double a0 = a;
@@ -78,7 +77,56 @@ double run_neon_128(double a, double b, int repeat) {
     return a;
 }
 
-    
+double run_sve(double a, double b, int repeat) {
+    svfloat64_t v_a = svdup_f64(a);
+    svfloat64_t v_b = svdup_f64(b);
+    svfloat64_t v_l = svdup_f64(LARGE_VALUE);
+    svfloat64_t v_a0 = v_a;
+    svbool_t pg = svptrue_b64();
+    const int vec_len = svlen_f64(v_a);
+
+    // correctness check
+    {
+        double tmp[vec_len];
+        svst1_f64(pg, tmp, v_a);
+        for (int i = 0; i < vec_len; i++) {
+            assert(tmp[i] == a);
+        }
+
+        svst1_f64(pg, tmp, v_b);
+        for (int i = 0; i < vec_len; i++) {
+            assert(tmp[i] == b);
+        }
+        
+        asm volatile(
+            "fsqrt %[a].d, %[p]/m, %[a].d\n" 
+            : [a] "+w" (v_a) 
+            : [p] "Upa" (pg)
+            :
+        );
+        svst1_f64(pg, tmp, v_a);
+        for (int i = 0; i < vec_len; i++) {
+            assert(tmp[i] == comp_op(a, b));
+        }
+    }
+
+    #pragma GCC unroll (32)
+    for (int i = 0; i < repeat; i++) {
+        asm volatile(
+            "fsqrt %[a].d, %[p]/m, %[a].d\n" 
+            "fadd %[a].d, %[p]/m, %[a].d, %[l].d\n" 
+            "fsub %[a].d, %[p]/m, %[a].d, %[l].d\n" 
+            "fadd %[a].d, %[p]/m, %[a].d, %[a0].d\n" 
+            : [a] "+w" (v_a) 
+            : [l] "w" (v_l), [a0] "w" (v_a0), [p] "Upa" (pg)
+            :
+        );
+    }
+
+    double tmp[vec_len];
+    svst1_f64(pg, tmp, v_a);
+    return tmp[0];
+}
 
 std::string get_input_normal_subnormal_format(double a, double b) {
     return fpclassify(comp_op(a, b)) + fpclassify(a);
