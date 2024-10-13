@@ -88,6 +88,7 @@ double run_all_simd(double a, double b, double c, std::vector<double> &cpi_list)
     double rv = 0;
     rv += measure_one_simd(op::run_serial, a, b, c, cpi_list);
     rv += measure_one_simd(op::run_neon_128, a, b, c, cpi_list);
+    rv += measure_one_simd(op::run_sve, a, b, c, cpi_list);
     return rv;
 }
 } // namespace simd_runner

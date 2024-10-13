@@ -1,6 +1,7 @@
 
 #pragma once
 #include <arm_neon.h>
+#include <arm_sve.h>
 #include "include.h"
 
 namespace op
@@ -89,6 +90,40 @@ double run_neon_128(double a, double b, double c, int repeat) {
     double tmp[2];
     vst1q_f64(tmp, v_a);
     assert(tmp[0] != 0 && tmp[0] == a * b + c);
+    return 0;
+}
+
+double run_sve(double a, double b, double c, int repeat) {
+    svfloat64_t v_a = svdup_f64(a);
+    svfloat64_t v_b = svdup_f64(b);
+    svfloat64_t v_c = svdup_f64(c);
+    svbool_t pg = svptrue_b64();
+
+    for (int i = 0; i < repeat; i += 4000) {
+        asm volatile(
+                DUP_1000(
+                    "mov z1.d, %[c].d\n"
+                    "mov z2.d, %[c].d\n"
+                    "mov z3.d, %[c].d\n"
+                    "mov z4.d, %[c].d\n"
+                    // "mov z5.d, %[c].d\n"
+                    // "mov z6.d, %[c].d\n"
+                    // "mov z7.d, %[c].d\n"
+                    // "mov z8.d, %[c].d\n"
+                    "fmla z1.d, %[p]/m, %[a].d, %[b].d\n"
+                    "fmla z2.d, %[p]/m, %[a].d, %[b].d\n"
+                    "fmla z3.d, %[p]/m, %[a].d, %[b].d\n"
+                    "fmla z4.d, %[p]/m, %[a].d, %[b].d\n"
+                    // "fmla z5.d, %[p]/m, %[a].d, %[b].d\n"
+                    // "fmla z6.d, %[p]/m, %[a].d, %[b].d\n"
+                    // "fmla z7.d, %[p]/m, %[a].d, %[b].d\n"
+                    // "fmla z8.d, %[p]/m, %[a].d, %[b].d\n"
+                )
+                :
+                : [a] "w" (v_a), [b] "w" (v_b), [c] "w" (v_c), [p] "Upa" (pg)
+                : "z1", "z2", "z3", "z4", "z5", "z6", "z7", "z8"
+            );
+    }
     return 0;
 }
 

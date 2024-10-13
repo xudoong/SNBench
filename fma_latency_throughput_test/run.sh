@@ -8,8 +8,8 @@ function intel
 
 function arm
 {
-    g++ -O3 -I./include main.cpp -DHW_ARM -DMODE_LATENCY -std=c++17 && ./a.out $1 $2
-    g++ -O3 -I./include main.cpp -DHW_ARM -DMODE_THROUGHPUT -std=c++17 && ./a.out $1 $2
+    g++ -O3 -I./include main.cpp -DHW_ARM -DMODE_LATENCY -std=c++17 -march=armv8-a+sve&& ./a.out $1 $2
+    g++ -O3 -I./include main.cpp -DHW_ARM -DMODE_THROUGHPUT -std=c++17 -march=armv8-a+sve && ./a.out $1 $2
 }
 
 $1 $2 $3

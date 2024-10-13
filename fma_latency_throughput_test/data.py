@@ -2,10 +2,10 @@ from collections import defaultdict
 
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 
 x86_file_path = ['./result/spr_latency.csv', './result/spr_throughput.csv', './result/gna_latency.csv', './result/gna_throughput.csv']
 arm_file_path = ['./result/kp_latency.csv', './result/kp_throughput.csv']
+kpf_file_path = ['./result/kpf_latency.csv', './result/kpf_throughput.csv']
 MAX_THRESHOLD = 10000
 
 def get_min_max_std(data_list):
@@ -68,6 +68,26 @@ def arm():
             print(sn_config, cpi_64_stat, cpi_128_stat)
             with open(file_path.replace('result/', 'result/stat_'), 'a') as f:
                 f.write(f'{sn_config},{tuple_to_csv_list(cpi_64_stat)},{tuple_to_csv_list(cpi_128_stat)}\n')
+
+    for file_path in kpf_file_path:
+        df = pd.read_csv(file_path, header=None, names=['op', 'fmt', 'i1', 'i2', 'i3', 'cpi-64', 'cpi-128', 'cpi-256'])
+        df = df.drop(columns=['i1', 'i2', 'i3'])
+        data = defaultdict(lambda: {'cpi-64': [], 'cpi-128': [], 'cpi-256': []})
+        for index, row in df.iterrows():
+            sn_config = row['op'].strip() + '-' + row['fmt'].strip()
+            data[sn_config]['cpi-64'].append(row['cpi-64'])
+            data[sn_config]['cpi-128'].append(float(row['cpi-128']))
+            data[sn_config]['cpi-256'].append(float(row['cpi-256']))
+
+        with open(file_path.replace('result/', 'result/stat_'), 'w') as f:
+            pass
+        for sn_config, cpi_data in data.items():
+            cpi_64_stat = get_min_max_std(cpi_data['cpi-64'])
+            cpi_128_stat = get_min_max_std(cpi_data['cpi-128'])
+            cpi_256_stat = get_min_max_std(cpi_data['cpi-256'])
+            print(sn_config, cpi_64_stat, cpi_128_stat, cpi_256_stat)
+            with open(file_path.replace('result/', 'result/stat_'), 'a') as f:
+                f.write(f'{sn_config},{tuple_to_csv_list(cpi_64_stat)},{tuple_to_csv_list(cpi_128_stat)},{tuple_to_csv_list(cpi_256_stat)}\n')
 
 x86()
 arm()
