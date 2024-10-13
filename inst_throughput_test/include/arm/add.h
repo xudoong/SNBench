@@ -1,6 +1,7 @@
 
 #pragma once
 #include <arm_neon.h>
+#include <arm_sve.h>
 #include "include.h"
 
 namespace op
@@ -40,6 +41,22 @@ double run_neon_128(double a, double b, int repeat) {
     for (int i = 0; i < repeat; i += UNROOL) {
         asm volatile(
                 DUP_X("fadd %[out].2d, %[a].2d, %[b].2d\n")
+                : [out] "=w" (v_out) 
+                : [a] "w" (v_a), [b] "w" (v_b)
+                :
+            );
+    }
+    return 0;
+}
+
+double run_sve(double a, double b, int repeat) {
+    svfloat64_t v_a = svdup_f64(a);
+    svfloat64_t v_b = svdup_f64(b);
+    svfloat64_t v_out;
+
+    for (int i = 0; i < repeat; i += UNROOL) {
+        asm volatile(
+                DUP_X("fadd %[out].d, %[a].d, %[b].d\n")
                 : [out] "=w" (v_out) 
                 : [a] "w" (v_a), [b] "w" (v_b)
                 :

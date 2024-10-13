@@ -65,6 +65,7 @@ int choose_repeat(op_func_t func, double a, double b)
     int repeat = MIN_TIMING_SECONDS / sec;
     repeat = std::max(repeat, MIN_REPEAT);
     repeat = std::min(repeat, MAX_REPEAT);
+    repeat = (repeat + 79999) / 80000 * 80000;
     return repeat + (foo > 1e308);
 }
 
@@ -87,9 +88,8 @@ double run_all_simd(double a, double b, std::vector<double> &cpi_list)
     double rv = 0;
 
     rv += measure_one_simd(op::run_serial,  a, b, cpi_list);
-    if (op::has_neon_128) {
-        rv += measure_one_simd(op::run_neon_128, a, b, cpi_list);
-    }
+    rv += measure_one_simd(op::run_neon_128, a, b, cpi_list);
+    rv += measure_one_simd(op::run_sve, a, b, cpi_list);
     
     return rv;
 }
