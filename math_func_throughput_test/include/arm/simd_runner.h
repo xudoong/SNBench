@@ -89,6 +89,7 @@ double run_all_simd(const double *a, const double *b, int n, std::vector<double>
     rv += measure_one_simd(op::run_serial,  a, b, n, cpi_list);
 #ifndef SCALAR_ONLY
     rv += measure_one_simd(op::run_neon_128, a, b, n, cpi_list);
+    rv += measure_one_simd(op::run_sve, a, b, n, cpi_list);
 #endif 
     return rv;
 }

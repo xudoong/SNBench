@@ -7,6 +7,8 @@ elif [[ "$hostname" == camd9654n1* ]]; then
     device="gna"
 elif [[ "$hostname" == kp* ]]; then
     device="kp"
+elif [[ "$hostname" == c9*b* ]]; then 
+    device="kpb"
 else
     device="other"
 fi
@@ -117,33 +119,34 @@ function arm_sleef_u10
 {
     rm result/output.csv
     rm $2
-    g++ -O3 main.cpp -I./include -I. -std=c++17 -DMATH_LIB_SLEEF_U10 -lsleef -DHW_ARM -DOP_POW && ./a.out $1 $2
-    g++ -O3 main.cpp -I./include -I. -std=c++17 -DMATH_LIB_SLEEF_U10 -lsleef -DHW_ARM -DOP_EXP && ./a.out $1 $2
-    g++ -O3 main.cpp -I./include -I. -std=c++17 -DMATH_LIB_SLEEF_U10 -lsleef -DHW_ARM -DOP_LOG && ./a.out $1 $2
-    g++ -O3 main.cpp -I./include -I. -std=c++17 -DMATH_LIB_SLEEF_U10 -lsleef -DHW_ARM -DOP_SIN && ./a.out $1 $2
-    g++ -O3 main.cpp -I./include -I. -std=c++17 -DMATH_LIB_SLEEF_U10 -lsleef -DHW_ARM -DOP_COS && ./a.out $1 $2
-    g++ -O3 main.cpp -I./include -I. -std=c++17 -DMATH_LIB_SLEEF_U10 -lsleef -DHW_ARM -DOP_TAN && ./a.out $1 $2
+    g++ -O3 main.cpp -I./include -I. -std=c++17 -DMATH_LIB_SLEEF_U10 -lsleef -DHW_ARM -DOP_POW -march=armv8-a+sve && ./a.out $1 $2
+    g++ -O3 main.cpp -I./include -I. -std=c++17 -DMATH_LIB_SLEEF_U10 -lsleef -DHW_ARM -DOP_EXP -march=armv8-a+sve && ./a.out $1 $2
+    g++ -O3 main.cpp -I./include -I. -std=c++17 -DMATH_LIB_SLEEF_U10 -lsleef -DHW_ARM -DOP_LOG -march=armv8-a+sve && ./a.out $1 $2
+    g++ -O3 main.cpp -I./include -I. -std=c++17 -DMATH_LIB_SLEEF_U10 -lsleef -DHW_ARM -DOP_SIN -march=armv8-a+sve && ./a.out $1 $2
+    g++ -O3 main.cpp -I./include -I. -std=c++17 -DMATH_LIB_SLEEF_U10 -lsleef -DHW_ARM -DOP_COS -march=armv8-a+sve && ./a.out $1 $2
+    g++ -O3 main.cpp -I./include -I. -std=c++17 -DMATH_LIB_SLEEF_U10 -lsleef -DHW_ARM -DOP_TAN -march=armv8-a+sve && ./a.out $1 $2
 }
 
 function arm_sleef_u40
 {
     rm result/output.csv
     rm $2
-    g++ -O3 main.cpp -I./include -I. -std=c++17 -DMATH_LIB_SLEEF_U35 -lsleef -DHW_ARM -DOP_LOG && ./a.out $1 $2
-    g++ -O3 main.cpp -I./include -I. -std=c++17 -DMATH_LIB_SLEEF_U35 -lsleef -DHW_ARM -DOP_SIN && ./a.out $1 $2
-    g++ -O3 main.cpp -I./include -I. -std=c++17 -DMATH_LIB_SLEEF_U35 -lsleef -DHW_ARM -DOP_COS && ./a.out $1 $2
-    g++ -O3 main.cpp -I./include -I. -std=c++17 -DMATH_LIB_SLEEF_U35 -lsleef -DHW_ARM -DOP_TAN && ./a.out $1 $2
+    g++ -O3 main.cpp -I./include -I. -std=c++17 -DMATH_LIB_SLEEF_U35 -lsleef -DHW_ARM -DOP_LOG -march=armv8-a+sve && ./a.out $1 $2
+    g++ -O3 main.cpp -I./include -I. -std=c++17 -DMATH_LIB_SLEEF_U35 -lsleef -DHW_ARM -DOP_SIN -march=armv8-a+sve && ./a.out $1 $2
+    g++ -O3 main.cpp -I./include -I. -std=c++17 -DMATH_LIB_SLEEF_U35 -lsleef -DHW_ARM -DOP_COS -march=armv8-a+sve && ./a.out $1 $2
+    g++ -O3 main.cpp -I./include -I. -std=c++17 -DMATH_LIB_SLEEF_U35 -lsleef -DHW_ARM -DOP_TAN -march=armv8-a+sve && ./a.out $1 $2
 }
 
 function arm_aml
 {
     rm result/output.csv
     rm $2
-    g++ -O3 main.cpp -I./include -I. -std=c++17 -DMATH_LIB_AML -lmathlib -DHW_ARM -DOP_POW && ./a.out $1 $2
-    g++ -O3 main.cpp -I./include -I. -std=c++17 -DMATH_LIB_AML -lmathlib -DHW_ARM -DOP_EXP && ./a.out $1 $2
-    g++ -O3 main.cpp -I./include -I. -std=c++17 -DMATH_LIB_AML -lmathlib -DHW_ARM -DOP_LOG && ./a.out $1 $2
-    g++ -O3 main.cpp -I./include -I. -std=c++17 -DMATH_LIB_AML -lmathlib -DHW_ARM -DOP_SIN && ./a.out $1 $2
-    g++ -O3 main.cpp -I./include -I. -std=c++17 -DMATH_LIB_AML -lmathlib -DHW_ARM -DOP_COS && ./a.out $1 $2
+    g++ -O3 main.cpp -I./include -I. -std=c++17 -DMATH_LIB_AML -lamath -DHW_ARM -DOP_POW -march=armv8-a+sve && ./a.out $1 $2
+    g++ -O3 main.cpp -I./include -I. -std=c++17 -DMATH_LIB_AML -lamath -DHW_ARM -DOP_EXP -march=armv8-a+sve && ./a.out $1 $2
+    g++ -O3 main.cpp -I./include -I. -std=c++17 -DMATH_LIB_AML -lamath -DHW_ARM -DOP_LOG -march=armv8-a+sve && ./a.out $1 $2
+    g++ -O3 main.cpp -I./include -I. -std=c++17 -DMATH_LIB_AML -lamath -DHW_ARM -DOP_SIN -march=armv8-a+sve && ./a.out $1 $2
+    g++ -O3 main.cpp -I./include -I. -std=c++17 -DMATH_LIB_AML -lamath -DHW_ARM -DOP_COS -march=armv8-a+sve && ./a.out $1 $2
+    g++ -O3 main.cpp -I./include -I. -std=c++17 -DMATH_LIB_AML -lamath -DHW_ARM -DOP_TAN -march=armv8-a+sve && ./a.out $1 $2
 }
 
 function arm_run_all

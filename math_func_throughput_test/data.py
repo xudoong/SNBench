@@ -2,18 +2,19 @@ import os
 from collections import defaultdict
 import numpy as np
 import pandas as pd
-from matplotlib import pyplot as plt
 
 os.makedirs('./result/figure/csv', exist_ok=True)
 
 INTEL_SIMD = ['scalar', 'sse_128', 'avx_256', 'avx_512']
 ARM_SIMD = ['scalar', 'neon_128']
+SVE_SIMD = ['scalar', 'neon_128', 'sve_256']
 
-DEV_LIST = ['spr', 'gna', 'kp']
+DEV_LIST = ['spr', 'gna', 'kp', 'kpb']
 SIMD_LIST =  {
     'spr': INTEL_SIMD,
     'gna': INTEL_SIMD,
-    'kp': ARM_SIMD
+    'kp': ARM_SIMD,
+    'kpb': SVE_SIMD
 
 }
 
@@ -22,7 +23,8 @@ ARM_CONFIG = ['gcc_scalar', 'sleef10', 'sleef40', 'aml']
 CONFIG_LIST = {
     'spr': INTEL_CONFIG,
     'gna': INTEL_CONFIG,
-    'kp': ARM_CONFIG
+    'kp': ARM_CONFIG,
+    'kpb': ARM_CONFIG
 }
 
 CONFIG_REPLACE_DICT = {
@@ -35,6 +37,8 @@ CONFIG_REPLACE_DICT = {
 def parse_simd_data(file_path, simd):
     if 'kp_' in file_path:
         col_idx = {'scalar': 2, 'neon_128': 3}[simd]
+    elif 'kpb_' in file_path:
+        col_idx = {'scalar': 2, 'neon_128': 3, 'sve_256': 4}[simd]
     else:
         col_idx = {'scalar': 2, 'sse_128': 3, 'avx_256': 4, 'avx_512':5}[simd]
     rv = {}

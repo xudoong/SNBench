@@ -1,0 +1,17 @@
+POW,NNN,   32.7
+POW,NSN,   52.6
+POW,NNS,    9.8
+POW,NSS,    8.0
+POW,SNN,   51.1
+POW,SSN,   54.9
+EXP,NN,   16.4
+EXP,NS,    8.0
+EXP,SN,   18.8
+LOG,NN,   11.1
+LOG,NS,   13.6
+SIN,NN,   24.3
+SIN,SS,   10.0
+COS,NN,   24.2
+COS,NS,    8.0
+TAN,NN,   29.8
+TAN,SS,   10.0
